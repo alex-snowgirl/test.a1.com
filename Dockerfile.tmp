@@ -1,0 +1,50 @@
+FROM php
+#FROM ubuntu:latest
+LABEL maintainer "alex.snowgirl@gmail.com"
+
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get update
+RUN apt-get upgrade -y
+
+RUN apt-get install php5 php5-json
+RUN service apache2 restart
+
+#RUN apt-get install -y git wget
+#RUN git clone https://github.com/alex-snowgirl/test.a1.com.git
+
+
+#php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+#php -r "if (hash_file('SHA384', 'composer-setup.php') === '669656bab3166a7aff8a7506b8cb2d1c292f042046c5a994c43155c0be6190fa0355160742ab2e1c88d40d5be660b410') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+#php composer-setup.php
+#php -r "unlink('composer-setup.php');"
+
+#php composer-setup.php --install-dir=bin --filename=composer
+#RUN curl -sS https://getcomposer.org/installer | \
+#    php -- --install-dir=/usr/bin/ --filename=composer
+#WORKDIR /app
+#COPY . ./
+#RUN composer install --no-dev --no-interaction -o
+
+
+
+#WORKDIR test.a1.com/pub
+WORKDIR pub
+
+#RUN php -S localhost:80
+#CMD ["php", "-S", "localhost:80"]
+
+#ps -ef | grep php
+#kill -9 PID
+
+EXPOSE 8080
+CMD php -S 0.0.0.0:8080
+
+# Usage:
+# docker build -t a1-com
+# docker run -d -p 8080:80 a1-com
+# open http://192.168.99.100:8080/
+
+# docker run -d -p 8080:80 a1-com
+
+# docker run -p 8080:80 -d -v /Users/dan/site:/var/www/site a1-com

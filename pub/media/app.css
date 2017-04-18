@@ -1,0 +1,145 @@
+@font-face {
+    font-family: Gilroy;
+    font-weight: 700;
+    src: url(Gilroy-ExtraBold.otf)
+}
+
+@font-face {
+    font-family: Gilroy;
+    font-weight: 400;
+    src: url(Gilroy-Light.otf)
+}
+
+body {
+    text-align: center;
+}
+
+body, h1, .h1, h2, .h2, h3, .h3, .section-title, .header, textarea {
+    font-family: Gilroy, tahoma, arial, verdana, sans-serif;
+}
+
+input[type="text"], textarea, button {
+    padding: 8px 16px;
+    font-size: 16px
+}
+
+#app {
+    display: block;
+    min-height: 400px;
+    /*padding-top: 30px;*/
+    padding-bottom: 30px;
+    width: 600px;
+    margin: 0 auto;
+}
+
+#app.loading > * {
+    display: none;
+}
+
+#app.loading {
+    background: url(/media/loading.gif) center top no-repeat;
+}
+
+#app .hero + .hero {
+    margin-top: 30px;
+}
+
+#app.pick-hero .hero {
+    cursor: pointer;
+}
+
+#app.pick-hero .hero:hover * {
+    text-shadow: 1px 1px;
+}
+
+#app .hero-name {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#app .hero-attack {
+    color: darkred;
+}
+
+#app .hero-defence {
+    color: darkgreen;
+}
+
+#app > * + * {
+    margin-top: 15px;
+}
+
+#app .candidate > div + div {
+    margin-top: 10px;
+}
+
+#app.fight .log {
+    max-height: 200px;
+    overflow-y: scroll;
+    width: 400px;
+    margin: 0 auto;
+}
+
+#app.pick-game .game {
+    display: inline-block;
+}
+
+#app.pick-game .game .score-overview > div {
+    width: 50%;
+    text-align: center;
+    border: 1px solid gray;
+}
+
+#app.pick-game .game .score-overview > div + div {
+    border-left: 0
+}
+
+#app.pick-game .game {
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+#app.pick-game .game .score-overview,
+#app:not(.loading).fight .vs,
+#app.fight .log-round-body {
+    display: table;
+    width: 100%;
+}
+
+#app.pick-game .game .score-overview > div,
+#app.fight .vs > div,
+#app.fight .log-round-body > div {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#app.fight .vs .score {
+    font-size: 30px;
+}
+
+#app.fight h2 .result {
+    margin-left: 10px;
+}
+
+#app .score.won,
+#app.fight .result.won {
+    color: darkgreen;
+}
+
+#app .score.lose,
+#app.fight .result.lose {
+    color: darkred;
+}
+
+#app.fight .vs .score {
+    width: 100px
+}
+
+#app.fight .vs .user,
+#app.fight .log-round-body > div {
+    width: 150px
+}
+
+#app.fight .log-round + .log-round {
+    margin-top: 5px
+}
