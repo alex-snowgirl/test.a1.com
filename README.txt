@@ -13,6 +13,7 @@ Fully written by me (except jquery.js, fonts, Loading img and PHPUnit).
 Main Classes:
 1) CORE\Api\App - core API Application class
 2) APP\Api\App - extended version of core API App class, - custom security layer added
+@todo check updated values, such as level increment
 3) CORE\Api\Entity - core Entity class, represent request entity (part of Command design pattern)
 (child classes: APP\Api\Entity\User, APP\Api\Entity\Hero, APP\Api\Entity\Game)
 4) CORE\Api\Action - core API Action class, represent request method (part of Command design pattern)
