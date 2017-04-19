@@ -6,9 +6,9 @@
  * Time: 12:18 AM
  */
 namespace CORE\Api\Action;
-use CORE\Api\Action;
-use CORE\DataHolder;
 
+use CORE\Api\Action;
+use CORE\Api\Response;
 
 /**
  * Class Patch
@@ -16,13 +16,15 @@ use CORE\DataHolder;
  */
 class Patch extends Action
 {
-    public function run()
+    public function run(Response $response = null)
     {
         $this->entity->update();
+        $output = $this->entity->read();
 
-        return new DataHolder(array(
-            'code' => 200,
-            'body' => $this->entity->read()
-        ));
+        if ($response) {
+            $response->setCode(200)->setBody($output);
+        }
+
+        return $output;
     }
 }

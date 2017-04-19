@@ -14,5 +14,5 @@ namespace CORE;
  */
 interface View
 {
-    public function output(DataHolder $holder);
+    public function generate($param);
 }

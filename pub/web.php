@@ -7,7 +7,7 @@
  */
 use CORE\Web\App;
 use CORE\Storage\Session;
-use CORE\View\HTML;
+use CORE\Web\View\HTML;
 
 require_once '../ini.php';
 $loader = require_once '../vendor/autoload.php';

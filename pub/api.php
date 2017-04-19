@@ -7,7 +7,7 @@
  */
 use APP\Api\App;
 use CORE\Storage\Session;
-use CORE\View\JSON;
+use CORE\Web\View\JSON;
 
 require_once '../ini.php';
 $loader = require_once '../vendor/autoload.php';

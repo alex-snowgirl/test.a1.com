@@ -7,10 +7,10 @@
  */
 namespace CORE\Web;
 
-use CORE\DataHolder;
 use CORE\Response;
 use CORE\Storage;
 use CORE\View;
+use CORE\Web\View as WebView;
 use CORE\Web\Request as WebRequest;
 use CORE\Web\Response as WebResponse;
 use CORE\Response\Exception as ResponseException;
@@ -39,16 +39,14 @@ class App extends \CORE\App
              * But made this for visual representing, so...
              *
              * Controller init should be here
-             * Than Action Call should return some data (DataHolder)
+             * Than Action Call should return some output
              *
              * But, taking into account the fact of single-page app...
              */
 
             $tmp = time();
 
-            $output = new DataHolder(array(
-                'code' => 200,
-                'body' => <<<HTML
+            $output = <<<HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -64,11 +62,10 @@ class App extends \CORE\App
     <script type="text/javascript">new gameApp('app', 'api.php');</script>
 </body>
 </html>
-HTML
-            ));
+HTML;
 
-            $this->response->setCode($output->code)
-                ->setBody($output->body);
+            $this->response->setCode(200)
+                ->setBody($output);
         } catch (ResponseException $ex) {
             $this->response->setCode($ex->getCode())
                 ->setBody($ex->getMessage());
@@ -90,6 +87,7 @@ HTML
 
     protected function iniResponse(View $view)
     {
+        /** @var WebView $view */
         return new WebResponse($view);
     }
 }

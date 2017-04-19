@@ -15,9 +15,7 @@ use CORE\Api\Action\Post;
 use CORE\Api\Action\Patch;
 use CORE\Api\Action\Put;
 use CORE\Api\Action\Delete;
-
-use CORE\DataHolder;
-use CORE\Response\Exception as ResponseException;
+use CORE\Session;
 
 /**
  * Class App
@@ -25,12 +23,20 @@ use CORE\Response\Exception as ResponseException;
  */
 class App extends \CORE\Api\App
 {
+    /**
+     * @var Session
+     */
+    protected $session;
+
     protected function bindHandlers(Action $action)
     {
         /**
          * Simple security
          * @todo auth
          */
+
+        //@todo lazy getter
+        $this->session = new Session();
 
         $action->on(Action::EVENT_BEFORE_RUN, function (Action $action) {
             $this->saveClientId()
@@ -39,18 +45,9 @@ class App extends \CORE\Api\App
                 ->checkUserId($action);
         });
 
-        $action->on(Action::EVENT_AFTER_RUN, function (Action $action, DataHolder $data) {
-            $this->saveClientUserId($action, $data);
+        $action->on(Action::EVENT_AFTER_RUN, function (Action $action, $output) {
+            $this->saveClientUserId($action, $output);
         });
-    }
-
-    protected function startSession()
-    {
-        if (!session_id()) {
-            session_start();
-        }
-
-        return $this;
     }
 
     /**
@@ -58,22 +55,18 @@ class App extends \CORE\Api\App
      * Checks if Client sends too many requests
      *
      * @return App
-     * @throws ResponseException
      */
     protected function checkRequestQuantity()
     {
-        $this->startSession();
-
         $now = time();
 
-        if (isset($_SESSION['time'])) {
-            if ($now - $_SESSION['time'] < 1) {
-                header('Retry-After: 1');
-
-                throw new ResponseException('Too many requests', 429);
+        if (isset($this->session->time)) {
+            if ($now - $this->session->time < 1) {
+                $this->response->setCode(429)->setBody('Too many requests')
+                    ->addHeader('Retry-After: 1')->send(true);
             }
         } else {
-            $_SESSION['time'] = $now;
+            $this->session->time = $now;
         }
 
         return $this;
@@ -86,10 +79,8 @@ class App extends \CORE\Api\App
      */
     protected function saveClientId()
     {
-        $this->startSession();
-
-        if (!isset($_SESSION['client_id'])) {
-            $_SESSION['client_id'] = $this->request->getClientId();
+        if (!isset($this->session->client_id)) {
+            $this->session->client_id = $this->request->getClientId();
         }
 
         return $this;
@@ -99,33 +90,18 @@ class App extends \CORE\Api\App
      * Saves Client User id
      *
      * @param Action $action
-     * @param DataHolder $data
+     * @param mixed $output
      * @return $this
      */
-    protected function saveClientUserId(Action $action, DataHolder $data)
+    protected function saveClientUserId(Action $action, $output)
     {
         if (Post::class == get_class($action) && User::class == get_class($action->getEntity())) {
-            $this->startSession();
-
-            if (!isset($_SESSION['user_id'])) {
-                $_SESSION['user_id'] = array();
-            }
-
-            $_SESSION['user_id'][] = $data->body['id'];
+            $tmp = $this->session->get('user_id', array());
+            $tmp[] = $output['id'];
+            $this->session->set('user_id', $tmp);
         }
 
         return $this;
-    }
-
-    protected function getClientUserIds()
-    {
-        $this->startSession();
-
-        if (isset($_SESSION['user_id'])) {
-            return $_SESSION['user_id'];
-        }
-
-        return array();
     }
 
     /**
@@ -133,20 +109,15 @@ class App extends \CORE\Api\App
      * Checks if stored and received Client ids are different
      *
      * @return App
-     * @throws ResponseException
      */
     protected function checkClientIdBetweenRequests()
     {
-        if (!session_id()) {
-            session_start();
-        }
-
-        if (isset($_SESSION['client_id'])) {
-            if ($_SESSION['client_id'] != $this->request->getClientId()) {
-                throw new ResponseException('Invalid client id', 403);
+        if (isset($this->session->client_id)) {
+            if ($this->session->client_id != $this->request->getClientId()) {
+                $this->response->setCode(403)->setBody('Invalid client id')->send(true);
             }
         } else {
-            $_SESSION['client_id'] = $this->request->getClientId();
+            $this->session->client_id = $this->request->getClientId();
         }
 
         return $this;
@@ -157,21 +128,22 @@ class App extends \CORE\Api\App
      *
      * @param Action $action
      * @return $this
-     * @throws ResponseException
      */
     protected function checkUserId(Action $action)
     {
+        $clientUserIds = $this->session->get('user_id', array());
+
         if (in_array(get_class($action), array(Get::class, Put::class, Patch::class, Delete::class))
             && User::class == get_class($action->getEntity()) && $action->getEntity()->getId()
-            && !in_array($action->getEntity()->getId(), $this->getClientUserIds())
+            && !in_array($action->getEntity()->getId(), $clientUserIds)
         ) {
-            throw new ResponseException('User id is not belongs to you', 403);
+            $this->response->setCode(403)->setBody('User id is not belongs to you')->send(true);
         }
 
         $entityData = $action->getEntity()->read();
 
-        if (isset($entityData['user_id']) && !in_array($entityData['user_id'], $this->getClientUserIds())) {
-            throw new ResponseException('Entity is not belongs to you', 403);
+        if (isset($entityData['user_id']) && !in_array($entityData['user_id'], $clientUserIds)) {
+            $this->response->setCode(403)->setBody('Entity is not belongs to you')->send(true);
         }
 
         return $this;

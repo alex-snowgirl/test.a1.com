@@ -8,42 +8,10 @@
 namespace CORE;
 
 /**
- * Class Response
+ * Interface Response
  * @package CORE
  */
-abstract class Response extends DataHolder
+interface Response
 {
-    /**
-     * @var View
-     */
-    protected $view;
-
-    /**
-     * Constructor
-     * View object - is a strategy of rendering
-     *
-     * @param View $view
-     */
-    public function __construct(View $view)
-    {
-        $this->view = $view;
-        parent::__construct();
-    }
-
-    public function setCode($code)
-    {
-        $this->code = $code;
-        return $this;
-    }
-
-    public function setBody($body)
-    {
-        $this->body = $body;
-        return $this;
-    }
-
-    public function send()
-    {
-        $this->view->output($this);
-    }
+    public function send($die = false);
 }

@@ -8,7 +8,7 @@
 namespace CORE\Api\Action;
 
 use CORE\Api\Action;
-use CORE\DataHolder;
+use CORE\Api\Response;
 
 
 /**
@@ -17,13 +17,14 @@ use CORE\DataHolder;
  */
 class Delete extends Action
 {
-    public function run()
+    public function run(Response $response = null)
     {
-        $this->entity->delete();
+        $output = $this->entity->delete();
 
-        return new DataHolder(array(
-            'code' => 204,
-            'body' => array()
-        ));
+        if ($response) {
+            $response->setCode(204)->setBody(array());
+        }
+
+        return $output;
     }
 }

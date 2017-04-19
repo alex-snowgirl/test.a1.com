@@ -7,7 +7,6 @@
  */
 namespace CORE\Api;
 
-use CORE\DataHolder;
 use CORE\Observable;
 
 /**
@@ -26,7 +25,7 @@ abstract class Action extends Observable
      */
     protected $entity;
 
-    public function __construct(Entity $entity = null)
+    public function __construct(Entity $entity)
     {
         $this->entity = $entity;
     }
@@ -43,21 +42,23 @@ abstract class Action extends Observable
      * Command executor
      * @todo specify return type when PHP7
      *
-     * @return DataHolder
+     * @param Response|null $response
+     * @return mixed
      */
-    abstract public function run();
+    abstract public function run(Response $response = null);
 
     /**
      * Command executor
      * @todo specify return type when PHP7
      *
-     * @return DataHolder
+     * @param Response|null $response
+     * @return mixed
      */
-    public function apply()
+    public function apply(Response $response  = null)
     {
         $this->trigger(self::EVENT_BEFORE_RUN);
-        $data = $this->run();
-        $this->trigger(self::EVENT_AFTER_RUN, $data);
-        return $data;
+        $output = $this->run($response);
+        $this->trigger(self::EVENT_AFTER_RUN, $output);
+        return $output;
     }
 }

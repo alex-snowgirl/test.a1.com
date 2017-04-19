@@ -42,7 +42,7 @@ class User extends Entity
         foreach ($items as $k => $item) {
             if ($item['hero_id']) {
                 $heroGetCommand = new Get(new Hero($this->storage, $item['hero_id']));
-                $items[$k]['hero'] = $heroGetCommand->apply()->body;
+                $items[$k]['hero'] = $heroGetCommand->apply();
             }
         }
 

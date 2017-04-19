@@ -189,17 +189,11 @@ gameApp.prototype.getClientName = function () {
 };
 
 gameApp.prototype.request = function (uri, method, data, fn) {
-//    var isHasLoading = this.view.hasClass('loading');
-
-//    if (!isHasLoading) {
         this.view.addClass('loading');
-//    }
 
     return $.ajax({url: this.api + '/' + uri, dataType: 'json', type: method, data: data})
         .always($.proxy(function (response, code) {
-//            if (isHasLoading) {
                 this.view.removeClass('loading');
-//            }
 
             if (response) {
                 code = response.hasOwnProperty('responseJSON') ? response['responseJSON']['code'] : response['code'];

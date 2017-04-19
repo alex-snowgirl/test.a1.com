@@ -18,9 +18,14 @@ use CORE\Storage;
  */
 class Session implements Storage
 {
+    /**
+     * @var \CORE\Session
+     */
+    protected $session;
+
     public function __construct()
     {
-        session_start();
+        $this->session = new \CORE\Session();
     }
 
     public function insert($entity, $data)
@@ -81,7 +86,7 @@ class Session implements Storage
 
     protected function getAllEntities()
     {
-        return isset($_SESSION[self::ENTITIES_NAMESPACE]) ? $_SESSION[self::ENTITIES_NAMESPACE] : array();
+        return $this->session->get(self::ENTITIES_NAMESPACE, array());
     }
 
     protected function getEntitiesByType($type)
@@ -98,11 +103,10 @@ class Session implements Storage
 
     protected function setEntitiesByType($type, $entities)
     {
-        if (!isset($_SESSION[self::ENTITIES_NAMESPACE])) {
-            $_SESSION[self::ENTITIES_NAMESPACE] = array();
-        }
-
-        $_SESSION[self::ENTITIES_NAMESPACE][$type] = $entities;
+        $tmp = $this->getAllEntities();
+        $tmp[$type] = $entities;
+        $this->session->set(self::ENTITIES_NAMESPACE, $tmp);
+        return $this;
     }
 
     protected function genKey()

@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
 use CORE\Api\Action\Post;
 use APP\Api\Entity\User;
 use CORE\Storage\Session;
-use CORE\DataHolder;
 
 require_once '../vendor/autoload.php';
 
@@ -46,7 +45,7 @@ class CoreTest extends TestCase
         return [
             [
                 new User(new Session(), null, array('name' => 'Snowgirl')),
-                new DataHolder(array('code' => 201, 'body' => array('name' => 'Snowgirl', 'hero_id' => null, 'level' => 0)))
+                array('code' => 201, 'body' => array('name' => 'Snowgirl', 'hero_id' => null, 'level' => 0))
             ]
         ];
     }

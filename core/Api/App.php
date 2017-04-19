@@ -8,7 +8,6 @@
 namespace CORE\Api;
 
 use CORE\Api\Action;
-use CORE\DataHolder;
 use CORE\Response;
 use CORE\Api\Request as ApiRequest;
 use CORE\Api\Response as ApiResponse;
@@ -16,6 +15,7 @@ use CORE\Exception as CoreException;
 use CORE\Response\Exception as ResponseException;
 use CORE\Storage;
 use CORE\View;
+use CORE\Web\View as WebView;
 
 /**
  * Very simple REST API Application class
@@ -46,20 +46,11 @@ class App extends \CORE\App
 
         try {
             $entity = $this->getEntity();
+
             $action = $this->getAction($entity);
             $this->bindHandlers($action);
-            $output = $this->apply($action);
 
-            /**
-             * We could pass response object as Mediator to the action object also
-             * In this case we do not need lines below
-             *
-             * But I decided to make it more visually, so...
-             */
-            $this->response->setCode($output->code)
-                ->setBody($output->body);
-
-//            sleep(1);
+            $this->apply($action);
         } catch (ResponseException $ex) {
             $this->response->setCode($ex->getCode())
                 ->setBody($ex->getMessage());
@@ -81,6 +72,7 @@ class App extends \CORE\App
 
     protected function iniResponse(View $view)
     {
+        /** @var WebView $view */
         return new ApiResponse($view);
     }
 
@@ -145,10 +137,10 @@ class App extends \CORE\App
      * Command invoker
      *
      * @param Action $action
-     * @return DataHolder
+     * @return mixed
      */
     protected function apply(Action $action)
     {
-        return $action->apply();
+        return $action->apply($this->response);
     }
 }

@@ -63,7 +63,7 @@ class Game extends Entity
 
         foreach ($items as $k => $item) {
             $heroGetCommand = new Get(new Hero($this->storage, $item['candidate']['hero_id']));
-            $items[$k]['candidate']['hero'] = $heroGetCommand->apply()->body;
+            $items[$k]['candidate']['hero'] = $heroGetCommand->apply();
         }
 
         if ($this->getId()) {

@@ -8,8 +8,7 @@
 namespace CORE\Api\Action;
 
 use CORE\Api\Action;
-use CORE\DataHolder;
-use CORE\Response\Exception as ResponseException;
+use CORE\Api\Response;
 
 /**
  * Not in use!!
@@ -21,17 +20,24 @@ use CORE\Response\Exception as ResponseException;
  */
 class Put extends Action
 {
-    public function run()
+    public function run(Response $response = null)
     {
         if (!$this->entity->getId()) {
-            new ResponseException('Invalid id', 400);
+            if ($response) {
+                $response->setCode(400)->setBody('Invalid id');
+            }
+
+            return false;
         }
 
         $this->entity->update();
 
-        return new DataHolder(array(
-            'code' => 200,
-            'body' => $this->entity->read()
-        ));
+        $output = $this->entity->read();
+
+        if ($response) {
+            $response->setCode(200)->setBody($output);
+        }
+
+        return $output;
     }
 }

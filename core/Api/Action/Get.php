@@ -8,7 +8,7 @@
 namespace CORE\Api\Action;
 
 use CORE\Api\Action;
-use CORE\DataHolder;
+use CORE\Api\Response;
 
 /**
  * Class Get
@@ -16,11 +16,14 @@ use CORE\DataHolder;
  */
 class Get extends Action
 {
-    public function run()
+    public function run(Response $response = null)
     {
-        return new DataHolder(array(
-            'code' => 200,
-            'body' => $this->entity->read()
-        ));
+        $output = $this->entity->read();
+
+        if ($response) {
+            $response->setCode(200)->setBody($output);
+        }
+
+        return $output;
     }
 }

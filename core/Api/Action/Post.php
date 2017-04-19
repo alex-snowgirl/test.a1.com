@@ -8,7 +8,7 @@
 namespace CORE\Api\Action;
 
 use CORE\Api\Action;
-use CORE\DataHolder;
+use CORE\Api\Response;
 
 /**
  * Class Post
@@ -16,16 +16,18 @@ use CORE\DataHolder;
  */
 class Post extends Action
 {
-    public function run()
+    public function run(Response $response = null)
     {
         $id = $this->entity->create();
+        $output = $this->entity->setId($id)->read();
 
-        $header = 'Location: /' . $this->entity->getRawEntity() . '/' . $id;
-        header($header);
+        if ($response) {
+            $locationHeader = 'Location: /' . $this->entity->getRawEntity() . '/' . $id;
 
-        return new DataHolder(array(
-            'code' => 201,
-            'body' => $this->entity->setId($id)->read()
-        ));
+            $response->setCode(201)->setBody($output)
+                ->addHeader($locationHeader);
+        }
+
+        return $output;
     }
 }
